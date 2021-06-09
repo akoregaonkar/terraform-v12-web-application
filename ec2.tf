@@ -1,10 +1,10 @@
 resource "aws_instance" "bastion-server" {
-  ami             = "ami-0c1a7f89451184c8b"
-  instance_type   = "t3.medium"
+  ami               = "ami-0c1a7f89451184c8b"
+  instance_type     = "t3.medium"
   availability_zone = "ap-south-1a"
-  subnet_id       = aws_subnet.pub-subnet.id
-  key_name        = aws_key_pair.ubuntu.key_name
-  security_groups = ["${aws_security_group.bastion-ssh-icmp.id}"]
+  subnet_id         = aws_subnet.pub-subnet.id
+  key_name          = aws_key_pair.ubuntu.key_name
+  security_groups   = ["${aws_security_group.bastion-ssh-icmp.id}"]
   tags = {
     Name = "bastion-server"
   }

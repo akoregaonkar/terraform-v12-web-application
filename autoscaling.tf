@@ -1,36 +1,34 @@
-data "aws_ami" "ubuntu" {
-  most_recent = true
+#data "aws_availability_zones" "all" {}
 
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-20.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  #owners = ["099720109477"] # Canonical
-}
-
-resource "aws_launch_configuration" "as_conf" {
-  name_prefix   = "terraform-lc-example-"
-  image_id      = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+resource "aws_launch_configuration" "web-launch-config" {
+  image_id        = "ami-0c1a7f89451184c8b"
+  instance_type   = "t3.medium"
+  key_name        = aws_key_pair.ubuntu.key_name
+  security_groups = [aws_security_group.webserver-ssh-http-icmp.id]
+  user_data       = file("install_apache.sh")
 
   lifecycle {
     create_before_destroy = true
   }
 }
 
-resource "aws_autoscaling_group" "bar" {
-  name                 = "terraform-asg-example"
-  launch_configuration = aws_launch_configuration.as_conf.name
-  min_size             = 1
-  max_size             = 2
+resource "aws_autoscaling_group" "web-asg" {
+  launch_configuration = aws_launch_configuration.web-launch-config.id
+  #availability_zones   = data.aws_availability_zones.all.names
+  #availability_zones = ["ap-south-1a"]
+  vpc_zone_identifier = [aws_subnet.pri-subnet.id]
+  #subnet_id          = aws_subnet.pri-subnet.id
 
-  lifecycle {
-    create_before_destroy = true
+  min_size         = "3"
+  max_size         = "6"
+  desired_capacity = "3"
+
+  load_balancers    = [aws_elb.bar.name]
+  health_check_type = "ELB"
+
+  tag {
+    key                 = "Name"
+    value               = "web-asg"
+    propagate_at_launch = true
   }
 }

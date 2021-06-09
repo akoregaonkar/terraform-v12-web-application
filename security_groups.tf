@@ -1,5 +1,5 @@
 resource "aws_security_group" "webserver-ssh-http-icmp" {
-  name        = "ssh"
+  name        = "webserver-ssh-http-icmp"
   description = "Allow SSH inbound traffic"
   vpc_id      = aws_vpc.webapplication.id
 
@@ -32,15 +32,15 @@ resource "aws_security_group" "webserver-ssh-http-icmp" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
-    from_port        = 22
-    to_port          = 22
+    from_port        = 0
+    to_port          = 0
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
   egress {
-    from_port        = 80
-    to_port          = 80
+    from_port        = 0
+    to_port          = 0
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
@@ -51,7 +51,7 @@ resource "aws_security_group" "webserver-ssh-http-icmp" {
   }
 }
 resource "aws_security_group" "bastion-ssh-icmp" {
-  name        = "ssh"
+  name        = "bastion-ssh-icmp"
   description = "Allow SSH inbound traffic"
   vpc_id      = aws_vpc.webapplication.id
 
@@ -70,8 +70,8 @@ resource "aws_security_group" "bastion-ssh-icmp" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
-    from_port        = 22
-    to_port          = 22
+    from_port        = 0
+    to_port          = 0
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
@@ -88,3 +88,23 @@ resource "aws_security_group" "bastion-ssh-icmp" {
     Name = "bastion-ssh-icmp"
   }
 }
+
+#resource "aws_security_group" "elb-sg" {
+#  name = "elb-sg"
+#  # Allow all outbound
+#  egress {
+#    from_port   = 0
+#    to_port     = 0
+#    protocol    = "-1"
+#    cidr_blocks = ["0.0.0.0/0"]
+#  }
+#  # Inbound HTTP from anywhere
+#  ingress {
+#    #from_port   = var.elb_port
+#    #to_port     = var.elb_port
+#    from_port   = "80"
+#    to_port     = "80"
+#    protocol    = "tcp"
+#    cidr_blocks = ["0.0.0.0/0"]
+#  }
+#}

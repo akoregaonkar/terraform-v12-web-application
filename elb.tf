@@ -1,8 +1,9 @@
 resource "aws_elb" "bar" {
   name = "elb-pub-subnet"
   #availability_zones = ["ap-south-1a", "ap-south-1b", "ap-south-1c"]
+  #availability_zones = data.aws_availability_zones.all.names
   subnets         = [aws_subnet.pub-subnet.id]
-  security_groups = [aws_security_group.ssh.id]
+  security_groups = [aws_security_group.webserver-ssh-http-icmp.id]
   #access_logs {
   #  bucket        = "foo"
   #  bucket_prefix = "bar"
