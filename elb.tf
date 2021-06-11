@@ -18,7 +18,6 @@ resource "aws_elb" "my-elb" {
     interval            = 30
   }
 
-  instances                   = [aws_instance.web-pri.id]
   cross_zone_load_balancing   = true
   idle_timeout                = 400
   connection_draining         = true
